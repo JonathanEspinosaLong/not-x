@@ -14,7 +14,7 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Post {
+model Example {
     id        Int      @id @default(autoincrement())
     name      String
     createdAt DateTime @default(now())
