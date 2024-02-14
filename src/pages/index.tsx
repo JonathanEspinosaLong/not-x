@@ -1,47 +1,17 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 
-import { api } from "@/utils/api";
-import type { RouterOutputs } from "@/utils/api";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import CreatePostWizard from "@molecules/CreatePostWizard";
-import Image from "next/image";
-
-dayjs.extend(relativeTime);
-
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-
-  return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      <Image
-        src={author.profileImageUrl}
-        alt={`${author.username} profile picture`}
-        width={56}
-        height={56}
-        className="h-14 w-14 rounded-full "
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-slate-300">
-          <span>{`@${author.username}`}</span>
-          <span>·</span>
-          <span>{dayjs(post.createdAt).fromNow()}</span>
-        </div>
-        <span>{post.content}</span>
-      </div>
-    </div>
-  );
-};
+import Feed from "@/components/molecules/Feed";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import CreatePostWizard from "@components/molecules/CreatePostWizard";
+import { api } from "@utils/api";
 
 export default function Home() {
-  const user = useUser();
-  const { data, isLoading } = api.posts.getAll.useQuery();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
-  if (!data || isLoading) return <div>Loading...</div>;
+  // Start fetching even though data isn't needed here just to have data ready when needed
+  api.posts.getAll.useQuery();
 
-  if (!data) return <div>Something went wrong</div>;
+  if (!userLoaded) return <div />;
 
   return (
     <>
@@ -53,13 +23,15 @@ export default function Home() {
       <main className="flex h-screen justify-center ">
         <div className="h-full w-full border-x border-slate-400  md:max-w-2xl">
           <div className="flex border-b border-slate-400 p-4">
-            {user.isSignedIn ? <CreatePostWizard /> : <SignInButton />}
+            {isSignedIn ? (
+              <CreatePostWizard />
+            ) : (
+              <div className="flex justify-center">
+                <SignInButton />
+              </div>
+            )}
           </div>
-          <div className="fle flex-col">
-            {data.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
