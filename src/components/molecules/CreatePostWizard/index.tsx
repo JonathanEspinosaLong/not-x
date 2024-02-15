@@ -1,18 +1,25 @@
-import Image from "next/image";
 import { useState } from "react";
 
-import { api } from "@/utils/api";
+import Image from "next/image";
+import toast from "react-hot-toast";
+
+import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import { useUser } from "@clerk/nextjs";
+import { api } from "@utils/api";
 
 const CreatePostWizard = () => {
   const [input, setInput] = useState<string>("");
   const ctx = api.useUtils();
   const { user } = useUser();
 
-  const { mutate } = api.posts.create.useMutation({
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: async () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage?.[0]) toast.error(errorMessage[0]);
     },
   });
 
@@ -35,14 +42,24 @@ const CreatePostWizard = () => {
         onChange={(e) => {
           setInput(e.target.value);
         }}
-      />
-      <button
-        onClick={() => {
-          mutate({ content: input });
+        disabled={isPosting}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            mutate({ content: input });
+          }
         }}
-      >
-        Post
-      </button>
+      />
+      {input !== "" && (
+        <button
+          onClick={() => {
+            mutate({ content: input });
+          }}
+          disabled={isPosting}
+        >
+          {isPosting ? <LoadingSpinner size={20} /> : "Post"}
+        </button>
+      )}
     </div>
   );
 };

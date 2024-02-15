@@ -6,11 +6,11 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { clerkClient } from "@clerk/nextjs";
+import type { User } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
 
-import type { User } from "@clerk/nextjs/server";
 const filterUserForClient = (user: User) => {
   return {
     id: user.id,
@@ -57,7 +57,10 @@ export const postsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        content: z.string().min(1).max(255),
+        content: z
+          .string()
+          .min(1, "Must contain at least 1 character")
+          .max(255),
       }),
     )
     .mutation(async ({ ctx, input }) => {
