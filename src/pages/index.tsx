@@ -1,5 +1,5 @@
 import PageDisplay from "@/components/atoms/PageDisplay";
-import Feed from "@/components/molecules/Feed";
+import Timeline from "@/components/molecules/Timeline";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import CreatePostWizard from "@components/molecules/CreatePostWizard";
 import { api } from "@utils/api";
@@ -23,7 +23,7 @@ export default function Home() {
           </div>
         )}
       </div>
-      <Feed />
+      <Timeline />
     </PageDisplay>
   );
 }

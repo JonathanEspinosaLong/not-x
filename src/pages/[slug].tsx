@@ -4,6 +4,7 @@ import Image from "next/image";
 import superjson from "superjson";
 
 import PageDisplay from "@/components/atoms/PageDisplay";
+import ProfileFeed from "@/components/molecules/ProfileFeed";
 import { appRouter } from "@/server/api/root";
 import { db } from "@/server/db";
 import { api } from "@/utils/api";
@@ -34,6 +35,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <div className="h-[64px]" />
         <div className="p-4 text-xl font-bold">{`@${data.username}`}</div>
         <div className="w-full border-b border-slate-400"></div>
+        <ProfileFeed userId={data.id} />
       </PageDisplay>
     </>
   );

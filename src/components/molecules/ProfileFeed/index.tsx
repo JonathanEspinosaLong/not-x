@@ -1,12 +1,14 @@
 import React from "react";
 
+import PostView from "../PostView";
+
 import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import { api } from "@/utils/api";
 
-import PostView from "../PostView";
-
-const Feed = () => {
-  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
+const ProfileFeed = (props: ProfileFeedProps) => {
+  const { data, isLoading: postsLoading } = api.posts.getPostsByUserId.useQuery(
+    { userId: props.userId },
+  );
 
   if (postsLoading)
     return (
@@ -15,9 +17,7 @@ const Feed = () => {
       </div>
     );
 
-  if (!data) {
-    return <div>Something went wrong</div>;
-  }
+  if (!data || data.length === 0) return <div>User has not posted</div>;
 
   return (
     <div className="flex flex-col">
@@ -28,4 +28,6 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+type ProfileFeedProps = { userId: string };
+
+export default ProfileFeed;
