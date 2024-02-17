@@ -6,9 +6,9 @@ import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import { api } from "@/utils/api";
 
 const ProfileFeed = (props: ProfileFeedProps) => {
-  const { data, isLoading: postsLoading } = api.posts.getPostsByUserId.useQuery(
-    { userId: props.userId },
-  );
+  const { data, isLoading: postsLoading } = api.posts.getAllByUserId.useQuery({
+    userId: props.userId,
+  });
 
   if (postsLoading)
     return (

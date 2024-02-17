@@ -1,6 +1,6 @@
 import React from "react";
 
-import PostView from "../PostView";
+import PostView from "../SinglePostView";
 
 import LoadingSpinner from "@/components/atoms/LoadingSpinner";
 import { api } from "@/utils/api";
