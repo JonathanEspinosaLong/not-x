@@ -6,12 +6,18 @@ import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 
 export const profileRouter = createTRPCRouter({
-  getUserByUsername: publicProcedure
+  getUser: publicProcedure
     .input(z.object({ username: z.string() }))
     .query(async ({ input }) => {
-      const [user] = await clerkClient.users.getUserList({
+      let [user] = await clerkClient.users.getUserList({
         username: [input.username],
       });
+
+      if (!user) {
+        [user] = await clerkClient.users.getUserList({
+          userId: [input.username],
+        });
+      }
 
       if (!user) {
         throw new TRPCError({

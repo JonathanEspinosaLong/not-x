@@ -8,7 +8,7 @@ import { generateSsgHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { data } = api.profile.getUserByUsername.useQuery({
+  const { data } = api.profile.getUser.useQuery({
     username,
   });
 
@@ -17,7 +17,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   return (
     <>
       <Head>
-        <title>{data.username}</title>
+        <title>{data.username ?? data.id}</title>
       </Head>
       <PageDisplay>
         <div className="relative h-48 border-slate-300 bg-slate-600">
@@ -30,7 +30,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           />
         </div>
         <div className="h-[64px]" />
-        <div className="p-4 text-xl font-bold">{`@${data.username}`}</div>
+        <div className="p-4 text-xl font-bold">{`@${data.username ?? data.id}`}</div>
         <div className="w-full border-b border-slate-400"></div>
         <ProfileFeed userId={data.id} />
       </PageDisplay>
@@ -49,7 +49,7 @@ export async function getStaticProps(
 
   const username = slug?.replace("@", "");
 
-  await helpers.profile.getUserByUsername.prefetch({ username: username });
+  await helpers.profile.getUser.prefetch({ username: username });
 
   return {
     props: {
