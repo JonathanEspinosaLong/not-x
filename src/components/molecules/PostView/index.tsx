@@ -15,10 +15,10 @@ const PostView = (props: PostViewProps) => {
       key={post.id}
       className="flex gap-2 border-b border-stone-700 px-4 py-3 transition-all hover:bg-stone-950"
     >
-      <Link href={`/@${author.username}`}>
+      <Link href={`/@${author.handle}`}>
         <Image
           src={author.profilePictureUrl}
-          alt={`${author.username} profile picture`}
+          alt={`${author.handle} profile picture`}
           width={20}
           height={20}
           className="h-10 w-10 rounded-full transition-opacity hover:opacity-75"
