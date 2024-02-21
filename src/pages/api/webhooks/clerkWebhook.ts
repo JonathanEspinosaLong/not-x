@@ -59,13 +59,15 @@ export default async function handler(
   }
 
   // Get the ID and type
-  const { id, username, image_url } = evt.data as UserJSON;
+  const { id, username, image_url, first_name, last_name } =
+    evt.data as UserJSON;
 
   await db.user.upsert({
     where: { externalId: id },
     create: {
       externalId: id,
-      username: username ?? id,
+      username: `${first_name} ${last_name}`,
+      handle: "",
       profilePictureUrl: image_url,
     },
     update: {
