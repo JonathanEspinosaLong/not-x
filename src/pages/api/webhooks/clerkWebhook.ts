@@ -1,9 +1,9 @@
 import { buffer } from "micro";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { Webhook } from "svix";
 
 import { db } from "@/server/db";
-import { UserJSON, WebhookEvent } from "@clerk/nextjs/server";
+import type { UserJSON, WebhookEvent } from "@clerk/nextjs/server";
 
 export const config = {
   api: {
@@ -37,7 +37,6 @@ export default async function handler(
     return res.status(400).json({ error: "Error occurred -- no svix headers" });
   }
 
-  console.log("headers", req.headers, svix_id, svix_signature, svix_timestamp);
   // Get the body
   const body = (await buffer(req)).toString();
 
@@ -54,16 +53,12 @@ export default async function handler(
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error("Error verifying webhook:", err);
     return res.status(400).json({ Error: err });
   }
 
   // Get the ID and type
-  const { id, username, image_url, ...attributes } = evt.data as UserJSON;
-  const eventType = evt.type;
+  const { id, username, image_url } = evt.data as UserJSON;
 
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-  // console.log("Webhook body:", body);
   await db.user.upsert({
     where: { externalId: id },
     create: {
