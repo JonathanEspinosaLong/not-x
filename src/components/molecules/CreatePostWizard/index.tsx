@@ -5,13 +5,12 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 import LoadingSpinner from "@/components/atoms/LoadingSpinner";
-import { useUser } from "@clerk/nextjs";
 import { api } from "@utils/api";
 
-const CreatePostWizard = () => {
+const CreatePostWizard = (props: CreatePostWizardProps) => {
   const [input, setInput] = useState<string>("");
   const ctx = api.useUtils();
-  const { user } = useUser();
+  const user = api.profile.getUser.useQuery({ id: props.userId });
 
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: async () => {
@@ -24,13 +23,13 @@ const CreatePostWizard = () => {
     },
   });
 
-  if (!user) return null;
+  if (!user.data) return null;
 
   return (
     <div className="flex w-full gap-3  py-3 text-lg">
-      <Link href={`/@${user.username}`}>
+      <Link href={`/@${user.data?.handle}`}>
         <Image
-          src={user.imageUrl}
+          src={user.data.profilePictureUrl}
           alt="Profile image"
           className="h-10 w-10 rounded-full transition-opacity hover:opacity-75"
           width={40}
@@ -67,5 +66,7 @@ const CreatePostWizard = () => {
     </div>
   );
 };
+
+type CreatePostWizardProps = { userId: string };
 
 export default CreatePostWizard;

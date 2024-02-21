@@ -6,6 +6,22 @@ import { TRPCError } from "@trpc/server";
 
 export const profileRouter = createTRPCRouter({
   getUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { externalId: input.id },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "User not found",
+        });
+      }
+
+      return filterUserForClient(user);
+    }),
+  getUserByHandle: publicProcedure
     .input(z.object({ handle: z.string() }))
     .query(async ({ ctx, input }) => {
       const user = await ctx.db.user.findUnique({

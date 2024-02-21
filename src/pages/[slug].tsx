@@ -8,7 +8,7 @@ import { generateSsgHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 
 const ProfilePage: NextPage<{ handle: string }> = ({ handle }) => {
-  const { data } = api.profile.getUser.useQuery({
+  const { data } = api.profile.getUserByHandle.useQuery({
     handle,
   });
 
@@ -49,7 +49,7 @@ export async function getStaticProps(
 
   const handle = slug?.replace("@", "");
 
-  await helpers.profile.getUser.prefetch({ handle: handle });
+  await helpers.profile.getUserByHandle.prefetch({ handle: handle });
 
   return {
     props: {
