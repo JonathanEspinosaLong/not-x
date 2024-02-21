@@ -34,7 +34,9 @@ export default async function handler(
 
   // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return res.status(400).json({ error: "Error occurred -- no svix headers" });
+    return res
+      .status(400)
+      .json({ error: "Error occurred -- missing svix headers" });
   }
 
   // Get the body
