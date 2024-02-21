@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <PageDisplay>
-      <div className="flex border-b border-slate-400 p-4">
+      <div className="flex border-b border-stone-700 px-4">
         {isSignedIn ? (
           <CreatePostWizard />
         ) : (
