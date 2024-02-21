@@ -29,8 +29,11 @@ const ProfilePage: NextPage<{ handle: string }> = ({ handle }) => {
             className="absolute bottom-0 left-0 -mb-[64px] ml-4 rounded-full border-4 border-black bg-black"
           />
         </div>
-        <div className="h-[64px]" />
-        <div className="p-4 text-xl font-bold">{`@${data.username ?? data.id}`}</div>
+        <div className="h-16" />
+        <div className="flex flex-col p-4">
+          <span className="text-xl font-bold">{`${data.username}`}</span>
+          <span className=" text-sm text-stone-500">{`@${data.handle}`}</span>
+        </div>
         <div className="w-full border-b border-stone-700"></div>
         <ProfileFeed userId={data.id} />
       </PageDisplay>
