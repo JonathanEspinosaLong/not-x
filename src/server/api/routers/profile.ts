@@ -2,22 +2,15 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { filterUserForClient } from "@/server/helpers/filterUserForClient";
-import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 
 export const profileRouter = createTRPCRouter({
   getUser: publicProcedure
-    .input(z.object({ username: z.string() }))
-    .query(async ({ input }) => {
-      let [user] = await clerkClient.users.getUserList({
-        username: [input.username],
+    .input(z.object({ handle: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: { handle: input.handle },
       });
-
-      if (!user) {
-        [user] = await clerkClient.users.getUserList({
-          userId: [input.username],
-        });
-      }
 
       if (!user) {
         throw new TRPCError({

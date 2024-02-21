@@ -1,9 +1,10 @@
-import type { User } from "@clerk/nextjs/server";
+import type { Prisma } from "@prisma/client";
 
-export const filterUserForClient = (user: User) => {
+export const filterUserForClient = (
+  user: Prisma.UserCreateWithoutPostsInput,
+) => {
   return {
-    id: user.id,
-    username: user.username,
-    profileImageUrl: user.imageUrl,
+    ...user,
+    id: user.externalId,
   };
 };
