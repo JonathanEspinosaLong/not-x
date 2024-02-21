@@ -6,31 +6,9 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { filterUserForClient } from "@/server/helpers/filterUserForClient";
-import { clerkClient } from "@clerk/nextjs";
-import type { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-
-const addUserDataToPosts = async (posts: Post[]) => {
-  const users = (
-    await clerkClient.users.getUserList({
-      userId: posts.map((posts) => posts.authorId),
-      limit: 100,
-    })
-  ).map(filterUserForClient);
-
-  return posts.map((post) => {
-    const author = users.find((user) => user.id === post.authorId);
-    if (!author?.username && !author?.id)
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Author for post not found",
-      });
-
-    return { post, author: { ...author, username: author.id } };
-  });
-};
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -51,19 +29,27 @@ export const postsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const post = await ctx.db.post.findUnique({
         where: { id: input.id },
+        include: { author: true },
       });
 
       if (!post) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return (await addUserDataToPosts([post]))[0];
+      return [post].map((post) => ({
+        ...post,
+        author: filterUserForClient(post.author),
+      }))[0];
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.db.post.findMany({
       take: 100,
       orderBy: [{ createdAt: "desc" }],
+      include: { author: true },
     });
 
-    return addUserDataToPosts(posts);
+    return posts.map((post) => ({
+      ...post,
+      author: filterUserForClient(post.author),
+    }));
   }),
   getAllByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
@@ -73,8 +59,14 @@ export const postsRouter = createTRPCRouter({
           where: { authorId: input.userId },
           take: 100,
           orderBy: [{ createdAt: "desc" }],
+          include: { author: true },
         })
-        .then(addUserDataToPosts),
+        .then((data) => {
+          return data.map((post) => ({
+            ...post,
+            author: filterUserForClient(post.author),
+          }));
+        }),
     ),
   create: privateProcedure
     .input(

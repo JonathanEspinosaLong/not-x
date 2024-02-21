@@ -7,7 +7,7 @@ import type { RouterOutputs } from "@utils/api";
 
 const PostView = (props: PostViewProps) => {
   dayjs.extend(relativeTime);
-  const { post, author } = props;
+  const { author, ...post } = props;
 
   return (
     <Link
@@ -17,7 +17,7 @@ const PostView = (props: PostViewProps) => {
     >
       <Link href={`/@${author.username}`}>
         <Image
-          src={author.profileImageUrl}
+          src={author.profilePictureUrl}
           alt={`${author.username} profile picture`}
           width={20}
           height={20}
@@ -26,10 +26,10 @@ const PostView = (props: PostViewProps) => {
       </Link>
       <div className="flex flex-col text-sm">
         <div className="flex gap-1">
-          <Link href={`/@${author.username}`}>
-            <span className="font-bold hover:underline">{`@${author.username}`}</span>
+          <Link href={`/@${author.handle}`} className="flex gap-1">
+            <span className="font-bold hover:underline">{author.username}</span>
+            <span className="text-stone-600">{`@${author.handle} ·`}</span>
           </Link>
-          <span className="text-stone-600">·</span>
           <Link href={`/post/${post.id}`}>
             <span className="text-stone-600 hover:underline">
               {dayjs(post.createdAt).fromNow()}

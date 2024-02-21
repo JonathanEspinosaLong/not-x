@@ -7,9 +7,9 @@ import ProfileFeed from "@/components/molecules/ProfileFeed";
 import { generateSsgHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 
-const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
+const ProfilePage: NextPage<{ handle: string }> = ({ handle }) => {
   const { data } = api.profile.getUser.useQuery({
-    username,
+    handle,
   });
 
   if (!data) return <div>404</div>;
@@ -22,7 +22,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       <PageDisplay>
         <div className="relative h-48 border-stone-700 bg-slate-600">
           <Image
-            src={data.profileImageUrl}
+            src={data.profilePictureUrl}
             alt={`${data.username} profile's pic`}
             width={128}
             height={128}
@@ -47,14 +47,14 @@ export async function getStaticProps(
 
   if (typeof slug !== "string") throw new Error("no slug");
 
-  const username = slug?.replace("@", "");
+  const handle = slug?.replace("@", "");
 
-  await helpers.profile.getUser.prefetch({ username: username });
+  await helpers.profile.getUser.prefetch({ handle: handle });
 
   return {
     props: {
       trpcState: helpers.dehydrate(),
-      username,
+      handle,
     },
   };
 }

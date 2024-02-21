@@ -3,7 +3,7 @@
 
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["driverAdapters"]
+    previewFeatures = ["driverAdapters", "relationJoins"]
 }
 
 datasource db {
@@ -28,7 +28,8 @@ model Post {
 model User {
     id                Int      @id @default(autoincrement())
     externalId        String   @unique
-    username          String   @unique
+    username          String
+    handle            String   @unique
     profilePictureUrl String
     posts             Post[]
     createdAt         DateTime @default(now())
