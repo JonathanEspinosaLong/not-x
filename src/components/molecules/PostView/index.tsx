@@ -10,27 +10,35 @@ const PostView = (props: PostViewProps) => {
   const { post, author } = props;
 
   return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      <Image
-        src={author.profileImageUrl}
-        alt={`${author.username} profile picture`}
-        width={56}
-        height={56}
-        className="h-14 w-14 rounded-full "
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-1 text-slate-300">
+    <Link
+      href={`/post/${post.id}`}
+      key={post.id}
+      className="flex gap-2 border-b border-stone-700 px-4 py-3 transition-all hover:bg-stone-950"
+    >
+      <Link href={`/@${author.username}`}>
+        <Image
+          src={author.profileImageUrl}
+          alt={`${author.username} profile picture`}
+          width={20}
+          height={20}
+          className="h-10 w-10 rounded-full transition-opacity hover:opacity-75"
+        />
+      </Link>
+      <div className="flex flex-col text-sm">
+        <div className="flex gap-1">
           <Link href={`/@${author.username}`}>
-            <span>{`@${author.username}`}</span>
+            <span className="font-bold hover:underline">{`@${author.username}`}</span>
           </Link>
-          <span>·</span>
+          <span className="text-stone-600">·</span>
           <Link href={`/post/${post.id}`}>
-            <span>{dayjs(post.createdAt).fromNow()}</span>
+            <span className="text-stone-600 hover:underline">
+              {dayjs(post.createdAt).fromNow()}
+            </span>
           </Link>
         </div>
-        <span className="text-lg">{post.content}</span>
+        <span className="">{post.content}</span>
       </div>
-    </div>
+    </Link>
   );
 };
 
