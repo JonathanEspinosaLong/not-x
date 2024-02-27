@@ -12,6 +12,10 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     <ClerkProvider>
       <Head>
         <title>Not X</title>
+        <meta
+          name="google-site-verification"
+          content="kLT2-wHzvsYIrhsSunsr1nYidUGSxbaZun5cSYiYXAA"
+        />
         <meta name="description" content="🐦" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
